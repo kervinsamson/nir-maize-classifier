@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useRef, type ChangeEvent, type DragEvent } from 'react';
+import { useState, useRef, useEffect, type ChangeEvent, type DragEvent } from 'react';
+import { useTheme } from 'next-themes';
 
-// ── Icons ─────────────────────────────────────────────────────────────────────
+// â”€â”€ Icons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const BrainIcon = ({ className = 'w-8 h-8' }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -31,7 +32,45 @@ const SpinnerIcon = ({ className = 'w-4 h-4' }: { className?: string }) => (
   </svg>
 );
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+const SunIcon = ({ className = 'w-4 h-4' }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+  </svg>
+);
+
+const MoonIcon = ({ className = 'w-4 h-4' }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+  </svg>
+);
+
+// â”€â”€ Theme Toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+function ThemeToggle() {
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) {
+    return <div className="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 animate-pulse" />;
+  }
+
+  const isDark = resolvedTheme === 'dark';
+
+  return (
+    <button
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition-all duration-200 shadow-sm"
+    >
+      {isDark ? <SunIcon className="w-4 h-4" /> : <MoonIcon className="w-4 h-4" />}
+    </button>
+  );
+}
+
+// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface AnalysisResult {
   isBt: boolean;
@@ -39,7 +78,7 @@ interface AnalysisResult {
   inferenceTime: number;
 }
 
-// ── Upload Box ────────────────────────────────────────────────────────────────
+// â”€â”€ Upload Box â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface UploadBoxProps {
   file: File | null;
@@ -74,20 +113,20 @@ function UploadBox({ file, onFileSelect, accept, label, hint, variant }: UploadB
     'cursor-pointer transition-all duration-200 select-none ';
 
   if (uploaded) {
-    boxClass += 'border-green-500 bg-green-50 text-green-700';
+    boxClass += 'border-green-500 bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400';
   } else if (isDragging) {
     boxClass += isModel
-      ? 'border-blue-500 bg-blue-100 text-blue-600'
-      : 'border-slate-400 bg-slate-100 text-slate-500';
+      ? 'border-blue-500 bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400'
+      : 'border-slate-400 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400';
   } else {
     boxClass += isModel
-      ? 'border-blue-300 bg-blue-50 text-blue-500 hover:bg-blue-100 hover:border-blue-400'
-      : 'border-slate-300 bg-slate-50 text-slate-400 hover:bg-slate-100 hover:border-slate-400';
+      ? 'border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/40 text-blue-500 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-950 hover:border-blue-400'
+      : 'border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:border-slate-400';
   }
 
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</span>
+      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{label}</span>
       <div
         role="button"
         tabIndex={0}
@@ -102,7 +141,7 @@ function UploadBox({ file, onFileSelect, accept, label, hint, variant }: UploadB
         {uploaded ? (
           <>
             <CheckCircleIcon className="w-6 h-6" />
-            <span className="text-[11px] font-bold text-center px-3 w-full truncate text-center leading-relaxed">
+            <span className="text-[11px] font-bold text-center px-3 w-full truncate leading-relaxed">
               {file.name}
             </span>
           </>
@@ -130,27 +169,27 @@ function UploadBox({ file, onFileSelect, accept, label, hint, variant }: UploadB
   );
 }
 
-// ── Meta Row ──────────────────────────────────────────────────────────────────
+// â”€â”€ Meta Row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function MetaRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between py-2.5 border-b border-slate-100 last:border-0">
-      <span className="text-xs text-slate-400 font-medium">{label}</span>
-      <span className="text-xs font-bold text-slate-800 max-w-[58%] text-right truncate">{value}</span>
+    <div className="flex items-center justify-between py-2.5 border-b border-slate-100 dark:border-slate-700 last:border-0">
+      <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">{label}</span>
+      <span className="text-xs font-bold text-slate-800 dark:text-slate-200 max-w-[58%] text-right truncate">{value}</span>
     </div>
   );
 }
 
-// ── Right Column Placeholders ─────────────────────────────────────────────────
+// â”€â”€ Right Column Panels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function SpectralPlot({ hasData }: { hasData: boolean }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex flex-col gap-4 flex-1">
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 flex flex-col gap-4 flex-1">
       <div className="flex items-center justify-between">
-        <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Spectral Input</h3>
-        <span className="text-[10px] text-slate-300 font-mono tracking-wide">900 – 2500 nm</span>
+        <h3 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Spectral Input</h3>
+        <span className="text-[10px] text-slate-300 dark:text-slate-600 font-mono tracking-wide">900 - 2500 nm</span>
       </div>
-      <div className="flex-1 min-h-[200px] rounded-lg bg-slate-50 border border-dashed border-slate-200 flex items-center justify-center">
+      <div className="flex-1 min-h-[200px] rounded-lg bg-slate-50 dark:bg-slate-900 border border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center">
         {hasData ? (
           <svg className="w-full h-full px-8 py-4" viewBox="0 0 400 100" preserveAspectRatio="none" fill="none">
             <path
@@ -163,12 +202,12 @@ function SpectralPlot({ hasData }: { hasData: boolean }) {
             />
           </svg>
         ) : (
-          <div className="flex flex-col items-center gap-3 text-slate-300">
+          <div className="flex flex-col items-center gap-3 text-slate-300 dark:text-slate-600">
             <svg className="w-14 h-8" viewBox="0 0 120 40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
               <path d="M0 32 Q15 8 30 24 Q45 38 60 14 Q75 -4 90 20 Q105 38 120 16" />
             </svg>
             <span className="text-[11px] text-center leading-relaxed">
-              Upload a <code className="font-mono bg-slate-100 px-1 rounded text-slate-400">.spa</code> file to visualize the spectrum
+              Upload a <code className="font-mono bg-slate-100 dark:bg-slate-800 px-1 rounded text-slate-400 dark:text-slate-500">.spa</code> file to visualize the spectrum
             </span>
           </div>
         )}
@@ -187,18 +226,18 @@ function ProbabilityBars({ result }: { result: AnalysisResult | null }) {
   ];
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex flex-col gap-5">
-      <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Class Probability</h3>
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 flex flex-col gap-5">
+      <h3 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Class Probability</h3>
       <div className="flex flex-col gap-4">
         {bars.map(({ label, pct, barColor }) => (
           <div key={label} className="flex flex-col gap-1.5">
             <div className="flex justify-between items-center">
-              <span className="text-xs text-slate-500 font-medium">{label}</span>
-              <span className="text-xs font-bold font-mono text-slate-700">
-                {result ? `${pct.toFixed(1)}%` : '—'}
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{label}</span>
+              <span className="text-xs font-bold font-mono text-slate-700 dark:text-slate-300">
+                {result ? `${pct.toFixed(1)}%` : '--'}
               </span>
             </div>
-            <div className="h-2.5 rounded-full bg-slate-100 overflow-hidden">
+            <div className="h-2.5 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-700 ease-out"
                 style={{ width: `${pct}%`, backgroundColor: barColor }}
@@ -208,7 +247,7 @@ function ProbabilityBars({ result }: { result: AnalysisResult | null }) {
         ))}
       </div>
       {!result && (
-        <p className="text-[11px] text-slate-300 text-center">Run analysis to view class probabilities</p>
+        <p className="text-[11px] text-slate-300 dark:text-slate-600 text-center">Run analysis to view class probabilities</p>
       )}
     </div>
   );
@@ -217,22 +256,22 @@ function ProbabilityBars({ result }: { result: AnalysisResult | null }) {
 function MathBreakdown() {
   const panels = ['PCA Components', 'Feature Weights', 'Decision Boundary'];
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex flex-col gap-5">
-      <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Mathematical Breakdown</h3>
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 flex flex-col gap-5">
+      <h3 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Mathematical Breakdown</h3>
       <div className="grid grid-cols-3 gap-3">
         {panels.map((name) => (
-          <div key={name} className="rounded-lg bg-slate-50 border border-slate-100 p-4 flex flex-col items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-slate-200 animate-pulse" />
-            <span className="text-[10px] text-slate-400 text-center font-medium leading-tight">{name}</span>
+          <div key={name} className="rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 p-4 flex flex-col items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 animate-pulse" />
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 text-center font-medium leading-tight">{name}</span>
           </div>
         ))}
       </div>
-      <p className="text-[11px] text-slate-300 text-center">Run analysis to populate mathematical details</p>
+      <p className="text-[11px] text-slate-300 dark:text-slate-600 text-center">Run analysis to populate mathematical details</p>
     </div>
   );
 }
 
-// ── Main Page ─────────────────────────────────────────────────────────────────
+// â”€â”€ Main Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function Home() {
   const [modelFile, setModelFile] = useState<File | null>(null);
@@ -257,31 +296,34 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex flex-col">
 
-      {/* ── Header ── */}
-      <header className="bg-white border-b border-slate-200 shadow-sm flex-shrink-0">
+      {/* â”€â”€ Header â”€â”€ */}
+      <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm flex-shrink-0">
         <div className="px-8 py-4 flex items-center gap-4">
           <div className="flex items-center gap-2.5">
             <div className="w-2.5 h-2.5 rounded-full bg-[#7B1113]" />
-            <span className="text-sm font-bold text-slate-800 tracking-tight">NIR Maize Classifier</span>
+            <span className="text-sm font-bold text-slate-800 dark:text-slate-100 tracking-tight">NIR Maize Classifier</span>
           </div>
-          <div className="h-4 w-px bg-slate-200" />
-          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
-            Near-Infrared Spectroscopy · Bt Detection System
+          <div className="h-4 w-px bg-slate-200 dark:bg-slate-700" />
+          <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+            Near-Infrared Spectroscopy / Bt Detection System
           </span>
+          <div className="ml-auto">
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
-      {/* ── Dashboard ── */}
+      {/* â”€â”€ Dashboard â”€â”€ */}
       <div className="flex flex-1 gap-5 p-6 w-full">
 
-        {/* ── Left Column (30%) ── */}
+        {/* â”€â”€ Left Column (30%) â”€â”€ */}
         <aside className="w-[30%] flex flex-col gap-4 flex-shrink-0">
 
-          {/* Card 1 — System Inputs */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex flex-col gap-5">
-            <h2 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+          {/* Card 1 â€” System Inputs */}
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 flex flex-col gap-5">
+            <h2 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
               1. System Inputs
             </h2>
 
@@ -315,7 +357,7 @@ export default function Home() {
                   ? 'bg-[#7B1113] text-white opacity-75 cursor-not-allowed'
                   : canAnalyze
                     ? 'bg-[#7B1113] text-white hover:bg-[#5e0d0f] active:scale-[0.98] cursor-pointer shadow-md hover:shadow-lg'
-                    : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200',
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border border-slate-200 dark:border-slate-700',
               ].join(' ')}
             >
               {isProcessing ? (
@@ -324,33 +366,33 @@ export default function Home() {
                   Processing Data...
                 </>
               ) : (
-                'Analyze Spectrum ➔'
+                'Analyze Spectrum ->'
               )}
             </button>
           </div>
 
-          {/* Card 2 — Final Verdict (shown after analysis) */}
+          {/* Card 2 â€” Final Verdict (shown after analysis) */}
           {analysisResult && (
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex flex-col gap-4">
-              <h2 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 flex flex-col gap-4">
+              <h2 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
                 2. Final Verdict
               </h2>
 
               {analysisResult.isBt ? (
                 <div
-                  className="rounded-lg bg-red-50 border border-red-200 p-4"
+                  className="rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 p-4"
                   style={{ borderLeft: '4px solid #991b1b' }}
                 >
-                  <p className="text-red-800 font-bold uppercase tracking-wide text-sm">
+                  <p className="text-red-800 dark:text-red-400 font-bold uppercase tracking-wide text-sm">
                     BT CORN DETECTED
                   </p>
                 </div>
               ) : (
                 <div
-                  className="rounded-lg bg-green-50 border border-green-200 p-4"
+                  className="rounded-lg bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-900 p-4"
                   style={{ borderLeft: '4px solid #166534' }}
                 >
-                  <p className="text-green-800 font-bold uppercase tracking-wide text-sm">
+                  <p className="text-green-800 dark:text-green-400 font-bold uppercase tracking-wide text-sm">
                     NON-BT CORN
                   </p>
                 </div>
@@ -359,13 +401,13 @@ export default function Home() {
               <div className="flex flex-col">
                 <MetaRow label="Confidence" value={`${analysisResult.confidence}%`} />
                 <MetaRow label="Inference Time" value={`${analysisResult.inferenceTime}s`} />
-                <MetaRow label="Model Loaded" value={modelFile?.name ?? '—'} />
+                <MetaRow label="Model Loaded" value={modelFile?.name ?? '--'} />
               </div>
             </div>
           )}
         </aside>
 
-        {/* ── Right Column (70%) ── */}
+        {/* â”€â”€ Right Column (70%) â”€â”€ */}
         <main className="flex-1 flex flex-col gap-4 min-w-0">
           <SpectralPlot hasData={!!dataFile} />
           <div className="grid grid-cols-2 gap-4">
