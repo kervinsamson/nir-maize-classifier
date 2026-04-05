@@ -14,17 +14,53 @@
    python -m venv venv
    ```
 
-2. **Install dependencies**
+2. **Activate the virtual environment**
+
+   On Windows:
+   ```bash
+   venv\Scripts\activate
+   ```
+
+   On macOS/Linux:
+   ```bash
+   source venv/bin/activate
+   ```
+
+3. **Install dependencies**
 
    ```bash
    pip install -r requirements.txt
    ```
 
+4. **Launch Jupyter**
+
+   ```bash
+   jupyter notebook
+   ```
+
+   Then open the notebooks in the `notebooks/` directory in order:
+   - `01_data_loading.ipynb`
+   - `02_labeling.ipynb`
+   - `03_sg_preprocessing.ipynb`
+
 ### Frontend
 
-Navigate to the frontend folder and start the development server:
+1. **Navigate to the frontend directory**
 
-```bash
-cd app/frontend
-npm run dev
-```
+   ```bash
+   cd app/frontend
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server**
+
+   ```bash
+   npm run dev
+   ```
+
+   The app will be available at [http://localhost:3000](http://localhost:3000).
