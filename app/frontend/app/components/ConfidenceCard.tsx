@@ -1,9 +1,10 @@
 ﻿'use client';
 
 import { useState } from 'react';
+import type { AnalysisResult } from '../types';
 
 interface ConfidenceCardProps {
-  result?: AnalysisResult;
+  result?: AnalysisResult | null;
 }
 
 export function ConfidenceCard({ result }: ConfidenceCardProps) {
