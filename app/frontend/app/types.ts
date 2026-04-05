@@ -1,5 +1,6 @@
 export interface AnalysisResult {
-  isBt: boolean;
+  isHighProtein: boolean;
   confidence: number;
+  decisionFunctionScore: number;
   inferenceTime: number;
 }

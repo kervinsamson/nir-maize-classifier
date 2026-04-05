@@ -24,8 +24,9 @@ export default function Home() {
     // Placeholder: replace with real API call
     await new Promise<void>((resolve) => setTimeout(resolve, 2000));
     setAnalysisResult({
-      isBt: Math.random() > 0.5,
+      isHighProtein: Math.random() > 0.5,
       confidence: parseFloat((Math.random() * 8 + 91).toFixed(1)),
+      decisionFunctionScore: parseFloat((Math.random() * 6 - 3).toFixed(2)),
       inferenceTime: parseFloat((Math.random() * 0.3 + 0.2).toFixed(2)),
     });
     setIsProcessing(false);
@@ -41,7 +42,7 @@ export default function Home() {
           </div>
           <div className="h-4 w-px bg-slate-200 dark:bg-slate-700" />
           <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-            Near-Infrared Spectroscopy / Bt Detection System
+            Near-Infrared Spectroscopy / Protein Classification System
           </span>
           <div className="ml-auto">
             <ThemeToggle />
