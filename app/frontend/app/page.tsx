@@ -6,7 +6,7 @@ import { ThemeToggle } from './components/ThemeToggle';
 import { SystemInputsCard } from './components/SystemInputsCard';
 import { FinalVerdictCard } from './components/FinalVerdictCard';
 import { SpectralPlot } from './components/SpectralPlot';
-import { ConfidenceGauge } from './components/ConfidenceGauge';
+import { ConfidenceCard } from './components/ConfidenceCard';
 import { MathBreakdown } from './components/MathBreakdown';
 
 export default function Home() {
@@ -72,13 +72,7 @@ export default function Home() {
         <main className="flex-1 flex flex-col gap-4 min-w-0">
           <SpectralPlot hasData={!!dataFile} />
           <div className="grid grid-cols-2 gap-4">
-            {analysisResult && (
-              <ConfidenceGauge
-                confidence={analysisResult.confidence}
-                isHighProtein={analysisResult.isHighProtein}
-                decisionFunctionScore={analysisResult.decisionFunctionScore}
-              />
-            )}
+            <ConfidenceCard result={analysisResult} />
             <MathBreakdown />
           </div>
         </main>
