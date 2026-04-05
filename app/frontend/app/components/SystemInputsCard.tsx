@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { SpinnerIcon } from './icons';
 import { UploadBox } from './UploadBox';
 
@@ -22,6 +23,8 @@ export function SystemInputsCard({
   canAnalyze,
   onAnalyze,
 }: SystemInputsCardProps) {
+  const [showModelInfo, setShowModelInfo] = useState(false);
+
   return (
     <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 flex flex-col gap-5">
       <h2 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
@@ -36,6 +39,48 @@ export function SystemInputsCard({
         hint="Upload .h5 or .pkl"
         variant="model"
       />
+
+      <div>
+        <button
+          onClick={() => setShowModelInfo((prev) => !prev)}
+          className="text-xs font-semibold text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer bg-transparent border-none p-0 text-left"
+        >
+          Model Information {showModelInfo ? '▴' : '▾'}
+        </button>
+        <div className="overflow-hidden transition-all duration-200">
+          {showModelInfo && (
+            <table className="w-full rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 mt-2 text-xs">
+              <tbody>
+                {[
+                  { property: 'Algorithm', value: 'Support Vector Machine (SVM)' },
+                  { property: 'Kernel', value: 'RBF (Radial Basis Function)' },
+                  { property: 'Preprocessing', value: 'Savitzky-Golay (window=11, polyorder=2)' },
+                  { property: 'Training Samples', value: '2,000 (after augmentation)' },
+                  { property: 'Augmentation', value: 'Linear Interpolation (Li et al., 2025)' },
+                  { property: 'Test Accuracy', value: '—' },
+                  { property: 'F1-Score', value: '—' },
+                ].map(({ property, value }, i) => (
+                  <tr
+                    key={property}
+                    className={
+                      i % 2 === 0
+                        ? 'bg-slate-50 dark:bg-slate-800'
+                        : 'bg-white dark:bg-slate-900'
+                    }
+                  >
+                    <td className="text-slate-500 dark:text-slate-400 font-medium px-3 py-1.5 w-1/2">
+                      {property}
+                    </td>
+                    <td className="text-slate-700 dark:text-slate-300 px-3 py-1.5">
+                      {value}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
 
       <UploadBox
         file={dataFile}
