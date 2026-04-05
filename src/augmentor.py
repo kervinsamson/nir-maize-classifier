@@ -101,7 +101,7 @@ def split_data(X, y, test_size=0.2, random_state=42):
 # ---------------------------------------------------------------------------
 
 def interpolation_augment(X_train, y_train, target_total=2000,
-                           noise_level=0.01, random_state=42):
+                           noise_level=0.00, random_state=42):
     """
     Augment the training set using linear interpolation between pairs of
     existing samples, then add slight Gaussian noise for diversity.
@@ -129,7 +129,7 @@ def interpolation_augment(X_train, y_train, target_total=2000,
         paper for comparability.
     noise_level : float, optional
         Standard deviation of the Gaussian noise added to each synthetic
-        spectrum.  Default is 0.01.
+        spectrum.  Default is 0.00.
     random_state : int, optional
         Random seed for reproducibility.  Default is 42.
 
