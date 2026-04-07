@@ -64,3 +64,6 @@
    ```
 
    The app will be available at [http://localhost:3000](http://localhost:3000).
+
+### TODO
+- revise notebooks 05 - 06 to make use of new test/training data split
