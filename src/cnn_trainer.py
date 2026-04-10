@@ -295,7 +295,7 @@ def train_cnn(model, X_train, y_train, epochs=50, batch_size=32,
 # 4. Training History Plot
 # ---------------------------------------------------------------------------
 
-def plot_training_history(history):
+def plot_training_history(history, title='1D-CNN Training History'):
     """
     Plot training and validation loss and accuracy curves side by side.
 
@@ -310,6 +310,9 @@ def plot_training_history(history):
     ----------
     history : keras.callbacks.History
         History object returned by train_cnn() (or model.fit() directly).
+    title : str, optional
+        Title displayed above both subplots via fig.suptitle().
+        Defaults to '1D-CNN Training History'.
 
     Returns
     -------
@@ -321,7 +324,7 @@ def plot_training_history(history):
     epochs = range(1, len(history.history['loss']) + 1)
 
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-    fig.suptitle('1D-CNN Training History', fontsize=15, fontweight='bold')
+    fig.suptitle(title, fontsize=15, fontweight='bold')
 
     # --- Loss ---
     axes[0].plot(epochs, history.history['loss'],
