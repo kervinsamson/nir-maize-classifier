@@ -67,3 +67,5 @@
 
 ### TODO
 - use cross-validation on training the models because of very small dataset
+- save scaler on 1d cnn revised (same format as pls-da and svm (as a bundle))
+   - update inference.py based on this
