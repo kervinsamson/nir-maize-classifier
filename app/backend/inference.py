@@ -74,48 +74,35 @@ def run_inference(model_bytes: bytes, model_filename: str, csv_bytes: bytes) -> 
     X_smoothed = apply_savitzky_golay(X, window_length=11, polyorder=2, deriv=0)
 
     # ------------------------------------------------------------------
-    # 3. Load the model and detect its type
+    # 3. Load the model bundle (.pkl for all model types)
     # ------------------------------------------------------------------
-    if model_filename.endswith('.keras'):
-        # --- 1D-CNN (TensorFlow/Keras) ---
-        from tensorflow.keras.models import load_model  # type: ignore
-
-        # Keras needs a file path, not in-memory bytes, so we use a temp file
-        with tempfile.NamedTemporaryFile(suffix='.keras', delete=False) as tmp:
-            tmp.write(model_bytes)
-            tmp_path = tmp.name
-
-        try:
-            model = load_model(tmp_path)
-        finally:
-            # Always clean up the temporary file
-            os.unlink(tmp_path)
-
-        model_type = '1D-CNN'
-        is_svm = False
-
-    elif model_filename.endswith('.pkl'):
-        # --- PLS-DA or SVM (scikit-learn) ---
+    if model_filename.endswith('.pkl'):
         bundle = joblib.load(io.BytesIO(model_bytes))
         if not isinstance(bundle, dict) or 'model_type' not in bundle:
-            raise ValueError(
-                'Invalid .pkl file. Please upload a model saved by this system.'
-            )
+            raise ValueError("Invalid .pkl file. Please upload a model saved by this system.")
+
+        model_type = bundle['model_type']
+        scaler = bundle.get('scaler', None)
+
+        if model_type == '1D-CNN':
+            # CNN bundle contains path to .keras file — load it
+            from tensorflow.keras.models import load_model  # type: ignore
+            keras_path = bundle.get('keras_path')
+            if keras_path is None or not os.path.exists(keras_path):
+                raise ValueError(
+                    'CNN .keras model file not found. Ensure 1d_cnn_best.keras exists alongside the bundle.'
+                )
+            model = load_model(keras_path)
+
+        else:
+            # PLS-DA or SVM — model is stored directly in the bundle
+            model = bundle['model']
 
     else:
-        raise ValueError(
-            'Unsupported model format. Please upload a .keras or .pkl file.'
-        )
+        raise ValueError("Unsupported model file type. Please upload a .pkl file.")
 
     # ------------------------------------------------------------------
-    # 4. Extract model, scaler, and model_type from the bundle
-    # ------------------------------------------------------------------
-    model = bundle['model']
-    scaler = bundle['scaler']
-    model_type = bundle['model_type']
-
-    # ------------------------------------------------------------------
-    # 5a. Prepare input based on model type
+    # 4. Prepare input based on model type
     # ------------------------------------------------------------------
     if model_type == 'SVM':
         if scaler is None:
@@ -126,16 +113,19 @@ def run_inference(model_bytes: bytes, model_filename: str, csv_bytes: bytes) -> 
         X_input = X_smoothed
 
     elif model_type == '1D-CNN':
+        if scaler is not None:
+            X_smoothed = scaler.transform(X_smoothed)
         X_input = X_smoothed.reshape(1, 700, 1)
 
     else:
         raise ValueError(f'Unknown model type: {model_type}')
 
     # ------------------------------------------------------------------
-    # 5b. Generate prediction and confidence score
+    # 5. Generate prediction and confidence score
     # ------------------------------------------------------------------
     if model_type == 'PLS-DA':
-        raw = float(model.predict(X_input)[0][0])
+        prediction = model.predict(X_input)
+        raw = float(np.squeeze(prediction))  # handles both (1,1) and (1,) shapes
         confidence = float(np.clip(raw, 0.0, 1.0))
         decision_score = raw
 

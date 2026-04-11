@@ -51,10 +51,10 @@ async def predict(
     """
 
     # --- Validate file extensions ---
-    if not (model_file.filename.endswith('.pkl') or model_file.filename.endswith('.keras')):
+    if not model_file.filename.endswith('.pkl'):
         raise HTTPException(
             status_code=400,
-            detail='Invalid model file. Please upload a .pkl or .keras file.',
+            detail='Invalid model file. Please upload a .pkl file.',
         )
 
     if not spectrum_file.filename.endswith('.csv'):
