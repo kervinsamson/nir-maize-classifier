@@ -126,8 +126,16 @@ def run_inference(model_bytes: bytes, model_filename: str, csv_bytes: bytes) -> 
     if model_type == 'PLS-DA':
         prediction = model.predict(X_input)
         raw = float(np.squeeze(prediction))  # handles both (1,1) and (1,) shapes
-        confidence = float(np.clip(raw, 0.0, 1.0))
         decision_score = raw
+
+        # Shift boundary to 0 (raw - 0.5) and multiply by a scaling factor (e.g., 6.0)
+        # to steepen the curve so 0.0 and 1.0 result in strong confidence percentages.
+        shifted_score = (raw-0.5) * 6.0
+
+        # apply the same sigmoid math used in the SVM block
+        confidence = float(1 / (1 + np.exp(-shifted_score)))
+
+        # confidence = float(np.clip(raw, 0.0, 1.0))
 
     elif model_type == 'SVM':
         decision_score = float(model.decision_function(X_input)[0])
