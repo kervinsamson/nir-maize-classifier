@@ -85,9 +85,9 @@ export function SystemInputsCard({
       <UploadBox
         file={dataFile}
         onFileSelect={onDataSelect}
-        accept=".spa"
+        accept=".csv"
         label="Spectral Data"
-        hint="Upload .spa"
+        hint="Upload .csv"
         variant="data"
       />
 

@@ -23,7 +23,7 @@ export function SpectralPlot({ hasData }: { hasData: boolean }) {
               <path d="M0 32 Q15 8 30 24 Q45 38 60 14 Q75 -4 90 20 Q105 38 120 16" />
             </svg>
             <span className="text-[11px] text-center leading-relaxed">
-              Upload a <code className="font-mono bg-slate-100 dark:bg-slate-800 px-1 rounded text-slate-400 dark:text-slate-500">.spa</code> file to visualize the spectrum
+              Upload a <code className="font-mono bg-slate-100 dark:bg-slate-800 px-1 rounded text-slate-400 dark:text-slate-500">.csv</code> file to visualize the spectrum
             </span>
           </div>
         )}

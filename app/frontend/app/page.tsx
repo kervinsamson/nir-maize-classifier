@@ -14,6 +14,7 @@ export default function Home() {
   const [dataFile, setDataFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const canAnalyze = modelFile !== null && dataFile !== null && !isProcessing;
 
@@ -21,15 +22,36 @@ export default function Home() {
     if (!canAnalyze) return;
     setIsProcessing(true);
     setAnalysisResult(null);
-    // Placeholder: replace with real API call
-    await new Promise<void>((resolve) => setTimeout(resolve, 2000));
-    setAnalysisResult({
-      isHighProtein: Math.random() > 0.5,
-      confidence: parseFloat((Math.random() * 8 + 91).toFixed(1)),
-      decisionFunctionScore: parseFloat((Math.random() * 6 - 3).toFixed(2)),
-      inferenceTime: parseFloat((Math.random() * 0.3 + 0.2).toFixed(2)),
-    });
-    setIsProcessing(false);
+    setError(null);
+    try {
+      const formData = new FormData();
+      formData.append('model_file', modelFile);
+      formData.append('spectrum_file', dataFile);
+
+      const response = await fetch('http://localhost:8000/predict', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({ detail: 'Unknown error' }));
+        setError(err.detail ?? 'Request failed');
+        return;
+      }
+
+      const data = await response.json();
+      setAnalysisResult({
+        isHighProtein: data.isHighProtein,
+        confidence: data.confidencePercent,
+        decisionFunctionScore: data.decisionFunctionScore,
+        inferenceTime: data.inferenceTime,
+        modelType: data.modelType,
+      });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Network error');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -61,6 +83,11 @@ export default function Home() {
             canAnalyze={canAnalyze}
             onAnalyze={handleAnalyze}
           />
+          {error && (
+            <div className="rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 p-4 text-xs text-red-700 dark:text-red-400 font-medium">
+              {error}
+            </div>
+          )}
           {analysisResult && (
             <FinalVerdictCard
               result={analysisResult}
