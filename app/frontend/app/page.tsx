@@ -16,6 +16,7 @@ export default function Home() {
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [modelDetection, setModelDetection] = useState<ModelDetectionResult | null>(null);
+  const [spectrumData, setSpectrumData] = useState<number[] | null>(null);
 
   const API_URL = 'http://localhost:8000';
   const canAnalyze = modelFile !== null && dataFile !== null && !isProcessing;
@@ -40,6 +41,20 @@ export default function Home() {
     } catch {
       // Detection failed silently — model info will just show placeholders
     }
+  };
+
+  const handleDataSelect = (file: File) => {
+    setDataFile(file);
+    setSpectrumData(null);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      const values = text.trim().split(',').map(Number);
+      if (values.length === 700) {
+        setSpectrumData(values);
+      }
+    };
+    reader.readAsText(file);
   };
 
   const handleAnalyze = async () => {
@@ -102,7 +117,7 @@ export default function Home() {
             modelFile={modelFile}
             dataFile={dataFile}
             onModelSelect={handleModelSelect}
-            onDataSelect={setDataFile}
+            onDataSelect={handleDataSelect}
             isProcessing={isProcessing}
             canAnalyze={canAnalyze}
             onAnalyze={handleAnalyze}
@@ -122,7 +137,7 @@ export default function Home() {
         </aside>
 
         <main className="flex-1 flex flex-col gap-4 min-w-0">
-          <SpectralPlot hasData={!!dataFile} />
+          <SpectralPlot hasData={!!dataFile} spectrumData={spectrumData} />
           <div className="grid grid-cols-2 gap-4">
             <ConfidenceCard result={analysisResult} />
             <MathBreakdown />
