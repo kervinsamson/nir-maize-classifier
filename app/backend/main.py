@@ -80,3 +80,56 @@ async def predict(
     result['inferenceTime'] = round(time.time() - start, 3)
 
     return result
+
+
+@app.post('/detect')
+async def detect_model(model_file: UploadFile = File(...)):
+    if not model_file.filename.endswith('.pkl'):
+        raise HTTPException(
+            status_code=400,
+            detail='Invalid model file. Please upload a .pkl file.'
+        )
+
+    try:
+        import joblib
+        import io
+        model_bytes = await model_file.read()
+        bundle = joblib.load(io.BytesIO(model_bytes))
+
+        if not isinstance(bundle, dict) or 'model_type' not in bundle:
+            raise HTTPException(
+                status_code=422,
+                detail='Invalid model bundle. Please upload a model saved by this system.'
+            )
+
+        model_type = bundle['model_type']
+        has_scaler = bundle.get('scaler') is not None
+
+        # only model type and scaler presence are detected, other details are based on training configuration of SP 
+        return {
+            'modelType': model_type,
+            'hasScaler': has_scaler,
+            'algorithm': {
+                'SVM': 'Support Vector Machine (SVM)',
+                'PLS-DA': 'Partial Least Squares Discriminant Analysis (PLS-DA)',
+                '1D-CNN': '1D Convolutional Neural Network (1D-CNN)',
+            }.get(model_type, 'Unknown'),
+            'kernel': {
+                'SVM': 'RBF (Radial Basis Function)',
+                'PLS-DA': 'N/A',
+                '1D-CNN': 'N/A',
+            }.get(model_type, '—'),
+            'preprocessing': {
+                'SVM': 'Savitzky-Golay (window=11, polyorder=2) + StandardScaler',
+                'PLS-DA': 'Savitzky-Golay (window=11, polyorder=2)',
+                '1D-CNN': 'Savitzky-Golay (window=11, polyorder=2) + StandardScaler',
+            }.get(model_type, 'Savitzky-Golay (window=11, polyorder=2)'),
+            'trainingSamples': '2,000 (after augmentation)',
+            'augmentation': 'Linear Interpolation (Li et al., 2025)',
+            'cvStrategy': '5-Fold Stratified Cross Validation',
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Model detection failed: {str(e)}')

@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import { useState } from 'react';
-import type { AnalysisResult } from './types';
+import type { AnalysisResult, ModelDetectionResult } from './types';
 import { ThemeToggle } from './components/ThemeToggle';
 import { SystemInputsCard } from './components/SystemInputsCard';
 import { FinalVerdictCard } from './components/FinalVerdictCard';
@@ -15,8 +15,32 @@ export default function Home() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [modelDetection, setModelDetection] = useState<ModelDetectionResult | null>(null);
 
+  const API_URL = 'http://localhost:8000';
   const canAnalyze = modelFile !== null && dataFile !== null && !isProcessing;
+
+  const handleModelSelect = async (file: File) => {
+    setModelFile(file);
+    setModelDetection(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('model_file', file);
+
+      const response = await fetch(`${API_URL}/detect`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const detection: ModelDetectionResult = await response.json();
+        setModelDetection(detection);
+      }
+    } catch {
+      // Detection failed silently — model info will just show placeholders
+    }
+  };
 
   const handleAnalyze = async () => {
     if (!canAnalyze) return;
@@ -28,7 +52,7 @@ export default function Home() {
       formData.append('model_file', modelFile);
       formData.append('spectrum_file', dataFile);
 
-      const response = await fetch('http://localhost:8000/predict', {
+      const response = await fetch(`${API_URL}/predict`, {
         method: 'POST',
         body: formData,
       });
@@ -77,11 +101,12 @@ export default function Home() {
           <SystemInputsCard
             modelFile={modelFile}
             dataFile={dataFile}
-            onModelSelect={setModelFile}
+            onModelSelect={handleModelSelect}
             onDataSelect={setDataFile}
             isProcessing={isProcessing}
             canAnalyze={canAnalyze}
             onAnalyze={handleAnalyze}
+            modelDetection={modelDetection}
           />
           {error && (
             <div className="rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 p-4 text-xs text-red-700 dark:text-red-400 font-medium">

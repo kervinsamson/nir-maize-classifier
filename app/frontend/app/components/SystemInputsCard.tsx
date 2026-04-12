@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import type { ModelDetectionResult } from '../types';
 import { SpinnerIcon } from './icons';
 import { UploadBox } from './UploadBox';
 
@@ -12,6 +13,7 @@ interface SystemInputsCardProps {
   isProcessing: boolean;
   canAnalyze: boolean;
   onAnalyze: () => void;
+  modelDetection: ModelDetectionResult | null;
 }
 
 export function SystemInputsCard({
@@ -22,6 +24,7 @@ export function SystemInputsCard({
   isProcessing,
   canAnalyze,
   onAnalyze,
+  modelDetection,
 }: SystemInputsCardProps) {
   const [showModelInfo, setShowModelInfo] = useState(false);
 
@@ -45,20 +48,19 @@ export function SystemInputsCard({
           onClick={() => setShowModelInfo((prev) => !prev)}
           className="text-xs font-semibold text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer bg-transparent border-none p-0 text-left"
         >
-          Model Information {showModelInfo ? '▴' : '▾'}
+          Model Information {modelDetection ? `(${modelDetection.modelType})` : modelFile ? '(detecting...)' : ''} {showModelInfo ? '▴' : '▾'}
         </button>
         <div className="overflow-hidden transition-all duration-200">
           {showModelInfo && (
             <table className="w-full rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 mt-2 text-xs">
               <tbody>
                 {[
-                  { property: 'Algorithm', value: 'Support Vector Machine (SVM)' },
-                  { property: 'Kernel', value: 'RBF (Radial Basis Function)' },
-                  { property: 'Preprocessing', value: 'Savitzky-Golay (window=11, polyorder=2)' },
-                  { property: 'Training Samples', value: '2,000 (after augmentation)' },
-                  { property: 'Augmentation', value: 'Linear Interpolation (Li et al., 2025)' },
-                  { property: 'Test Accuracy', value: '—' },
-                  { property: 'F1-Score', value: '—' },
+                  { property: 'Algorithm',         value: modelDetection?.algorithm       ?? '—' },
+                  { property: 'Kernel',            value: modelDetection?.kernel          ?? '—' },
+                  { property: 'Preprocessing',     value: modelDetection?.preprocessing   ?? '—' },
+                  { property: 'Training Samples',  value: modelDetection?.trainingSamples ?? '—' },
+                  { property: 'Augmentation',      value: modelDetection?.augmentation    ?? '—' },
+                  { property: 'CV Strategy',       value: modelDetection?.cvStrategy      ?? '—' },
                 ].map(({ property, value }, i) => (
                   <tr
                     key={property}

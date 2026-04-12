@@ -5,3 +5,14 @@ export interface AnalysisResult {
   inferenceTime: number;
   modelType: string;
 }
+
+export interface ModelDetectionResult {
+  modelType: string;
+  hasScaler: boolean;
+  algorithm: string;
+  kernel: string;
+  preprocessing: string;
+  trainingSamples: string;
+  augmentation: string;
+  cvStrategy: string;
+}
