@@ -1,13 +1,13 @@
 ﻿'use client';
 
 import { useState } from 'react';
-import type { AnalysisResult, ModelDetectionResult } from './types';
+import type { AnalysisResult, ModelDetectionResult, PredictionRecord } from './types';
 import { ThemeToggle } from './components/ThemeToggle';
 import { SystemInputsCard } from './components/SystemInputsCard';
 import { FinalVerdictCard } from './components/FinalVerdictCard';
 import { SpectralPlot } from './components/SpectralPlot';
 import { ConfidenceCard } from './components/ConfidenceCard';
-import { MathBreakdown } from './components/MathBreakdown';
+import { PredictionHistory } from './components/PredictionHistory';
 
 export default function Home() {
   const [modelFile, setModelFile] = useState<File | null>(null);
@@ -17,6 +17,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [modelDetection, setModelDetection] = useState<ModelDetectionResult | null>(null);
   const [spectrumData, setSpectrumData] = useState<number[] | null>(null);
+  const [predictionHistory, setPredictionHistory] = useState<PredictionRecord[]>([]);
 
   const API_URL = 'http://localhost:8000';
   const canAnalyze = modelFile !== null && dataFile !== null && !isProcessing;
@@ -86,6 +87,15 @@ export default function Home() {
         inferenceTime: data.inferenceTime,
         modelType: data.modelType,
       });
+      setPredictionHistory(prev => [...prev, {
+        id: prev.length + 1,
+        filename: dataFile?.name ?? 'unknown.csv',
+        modelType: data.modelType,
+        isHighProtein: data.isHighProtein,
+        confidence: data.confidencePercent,
+        inferenceTime: data.inferenceTime,
+        timestamp: new Date().toLocaleTimeString(),
+      }]);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Network error');
     } finally {
@@ -140,7 +150,7 @@ export default function Home() {
           <SpectralPlot hasData={!!dataFile} spectrumData={spectrumData} />
           <div className="grid grid-cols-2 gap-4">
             <ConfidenceCard result={analysisResult} />
-            <MathBreakdown />
+            <PredictionHistory records={predictionHistory} />
           </div>
         </main>
       </div>

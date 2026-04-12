@@ -6,6 +6,16 @@ export interface AnalysisResult {
   modelType: string;
 }
 
+export interface PredictionRecord {
+  id: number;
+  filename: string;
+  modelType: string;
+  isHighProtein: boolean;
+  confidence: number;
+  inferenceTime: number;
+  timestamp: string;
+}
+
 export interface ModelDetectionResult {
   modelType: string;
   hasScaler: boolean;

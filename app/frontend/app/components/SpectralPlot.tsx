@@ -64,7 +64,7 @@ export function SpectralPlot({ hasData, spectrumData }: SpectralPlotProps) {
     : null;
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 flex flex-col gap-4 flex-1">
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h3 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
           Spectral Input
@@ -76,10 +76,10 @@ export function SpectralPlot({ hasData, spectrumData }: SpectralPlotProps) {
 
       {chartData ? (
         <>
-          <ResponsiveContainer width="100%" height={280}>
+          <ResponsiveContainer width="100%" height={220}>
             <AreaChart
               data={chartData}
-              margin={{ top: 10, right: 20, left: 55, bottom: 40 }}
+              margin={{ top: 10, right: 20, left: 55, bottom: 25 }}
             >
               <defs>
                 <linearGradient id="spectralGradient" x1="0" y1="0" x2="0" y2="1">
