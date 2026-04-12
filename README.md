@@ -70,3 +70,6 @@
 - save scaler on 1d cnn revised (same format as pls-da and svm (as a bundle))
    - update inference.py based on this
 - check if confidence percentage computation is correct 
+- frontend: revise confidence percentage card (too big wasted space)
+   - think of what to put there
+- add clear button to prediction history
