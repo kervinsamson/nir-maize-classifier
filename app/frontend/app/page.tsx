@@ -47,6 +47,8 @@ export default function Home() {
   const handleDataSelect = (file: File) => {
     setDataFile(file);
     setSpectrumData(null);
+    setAnalysisResult(null);
+    setError(null);
     const reader = new FileReader();
     reader.onload = (e) => {
       const text = e.target?.result as string;
@@ -147,7 +149,7 @@ export default function Home() {
         </aside>
 
         <main className="flex-1 flex flex-col gap-4 min-w-0">
-          <SpectralPlot hasData={!!dataFile} spectrumData={spectrumData} />
+          <SpectralPlot hasData={!!dataFile} spectrumData={spectrumData} isHighProtein={analysisResult?.isHighProtein ?? null} />
           <div className="grid grid-cols-2 gap-4">
             <ConfidenceCard result={analysisResult} />
             <PredictionHistory records={predictionHistory} />

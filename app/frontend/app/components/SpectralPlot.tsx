@@ -14,6 +14,7 @@ import {
 interface SpectralPlotProps {
   hasData: boolean;
   spectrumData: number[] | null;
+  isHighProtein?: boolean | null;
 }
 
 interface TooltipPayloadEntry {
@@ -39,7 +40,7 @@ const CustomTooltip = ({
   return null;
 };
 
-export function SpectralPlot({ hasData, spectrumData }: SpectralPlotProps) {
+export function SpectralPlot({ hasData, spectrumData, isHighProtein }: SpectralPlotProps) {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
@@ -55,6 +56,16 @@ export function SpectralPlot({ hasData, spectrumData }: SpectralPlotProps) {
   }, []);
 
   const gridStroke = isDark ? '#334155' : '#e2e8f0';
+
+  const lineColor =
+    isHighProtein === true ? '#22c55e' :
+    isHighProtein === false ? '#f97316' :
+    '#3b82f6';
+
+  const gradientDark =
+    isHighProtein === true ? '#22c55e' :
+    isHighProtein === false ? '#f97316' :
+    '#3b82f6';
 
   const chartData = spectrumData
     ? spectrumData.map((absorbance, i) => ({
@@ -83,8 +94,8 @@ export function SpectralPlot({ hasData, spectrumData }: SpectralPlotProps) {
             >
               <defs>
                 <linearGradient id="spectralGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.02} />
+                  <stop offset="5%" stopColor={gradientDark} stopOpacity={0.3} />
+                  <stop offset="95%" stopColor={gradientDark} stopOpacity={0.02} />
                 </linearGradient>
               </defs>
               <CartesianGrid
@@ -127,18 +138,21 @@ export function SpectralPlot({ hasData, spectrumData }: SpectralPlotProps) {
               <Area
                 type="monotone"
                 dataKey="absorbance"
-                stroke="#3b82f6"
+                stroke={lineColor}
                 strokeWidth={2}
                 fill="url(#spectralGradient)"
                 dot={false}
-                activeDot={{ r: 4, fill: '#3b82f6', stroke: '#1d4ed8', strokeWidth: 2 }}
+                activeDot={{ r: 4, fill: lineColor, stroke: lineColor, strokeWidth: 2 }}
                 isAnimationActive={false}
               />
             </AreaChart>
           </ResponsiveContainer>
 
           <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-700">
-            <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
+            <div
+              className="w-2 h-2 rounded-full flex-shrink-0"
+              style={{ backgroundColor: lineColor }}
+            />
             <p className="text-[10px] text-slate-400 dark:text-slate-500">
               Raw NIR Spectrum — 700 wavelength channels (1100–2498 nm at 2 nm intervals) — Savitzky-Golay smoothing applied before classification
             </p>
