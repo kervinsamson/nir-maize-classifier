@@ -6,6 +6,30 @@
 
 ## Getting Started
 
+
+### Backend
+
+1. **Navigate to the backend directory**
+
+   ```bash
+   cd app/backend
+   ```
+
+2. **Install dependencies**
+
+   *(Make sure your virtual environment is activated)*
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Start the backend server**
+
+   ```bash
+   uvicorn main:app --reload --port 8000
+   ```
+
+   The API will be available at [http://localhost:8000](http://localhost:8000).
+
 ### Jupyter Notebooks
 
 1. **Initialize a Python virtual environment**
