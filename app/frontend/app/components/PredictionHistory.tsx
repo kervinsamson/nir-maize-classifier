@@ -1,6 +1,7 @@
 'use client';
 
 import type { PredictionRecord } from '../types';
+import { InfoTooltip } from './InfoTooltip';
 
 interface PredictionHistoryProps {
   records: PredictionRecord[];
@@ -10,9 +11,12 @@ export function PredictionHistory({ records }: PredictionHistoryProps) {
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-          Prediction History
-        </h3>
+        <div className="flex items-center gap-1.5">
+          <h3 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+            Prediction History
+          </h3>
+          <InfoTooltip text="A running log of all predictions made this session — including the file name, model used, result, confidence score, and inference time." />
+        </div>
         <span className="text-[10px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-full">
           {records.length} {records.length === 1 ? 'sample' : 'samples'}
         </span>

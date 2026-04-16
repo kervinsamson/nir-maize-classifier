@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { AnalysisResult } from '../types';
+import { InfoTooltip } from './InfoTooltip';
 
 interface ConfidenceCardProps {
   result?: AnalysisResult | null;
@@ -17,9 +18,12 @@ export function ConfidenceCard({ result }: ConfidenceCardProps) {
   return (
     <>
       <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 flex flex-col gap-3">
-        <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-          ANALYSIS DETAILS
-        </p>
+        <div className="flex items-center gap-1.5">
+          <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+            ANALYSIS DETAILS
+          </p>
+          <InfoTooltip text="Shows the raw decision function score, model type, and a confidence percentage derived from the classifier's output." />
+        </div>
 
         {!result ? (
           <div className="flex flex-col items-center justify-center gap-2 py-8 text-slate-300 dark:text-slate-600">

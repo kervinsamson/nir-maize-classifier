@@ -1,6 +1,7 @@
 'use client';
 
 import type { AnalysisResult } from '../types';
+import { InfoTooltip } from './InfoTooltip';
 
 function MetaRow({ label, value }: { label: string; value: string }) {
   return (
@@ -19,9 +20,12 @@ interface FinalVerdictCardProps {
 export function FinalVerdictCard({ result, modelFileName }: FinalVerdictCardProps) {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 flex flex-col gap-4">
-      <h2 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-        2. Final Verdict
-      </h2>
+      <div className="flex items-center gap-1.5">
+        <h2 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+          2. Final Verdict
+        </h2>
+        <InfoTooltip text="The model's binary classification result — whether the sample is high or low in protein content." />
+      </div>
 
       {result.isHighProtein ? (
         <div

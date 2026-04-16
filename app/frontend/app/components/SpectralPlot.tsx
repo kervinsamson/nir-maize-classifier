@@ -10,6 +10,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from 'recharts';
+import { InfoTooltip } from './InfoTooltip';
 
 interface SpectralPlotProps {
   hasData: boolean;
@@ -77,9 +78,12 @@ export function SpectralPlot({ hasData, spectrumData, isHighProtein }: SpectralP
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-          Spectral Input
-        </h3>
+        <div className="flex items-center gap-1.5">
+          <h3 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+            Spectral Input
+          </h3>
+          <InfoTooltip text="Visualizes the NIR absorbance spectrum of the uploaded sample across the 1100–2498 nm wavelength range." />
+        </div>
         <span className="text-[10px] text-slate-300 dark:text-slate-600 font-mono tracking-wide">
           1100 - 2498 nm
         </span>

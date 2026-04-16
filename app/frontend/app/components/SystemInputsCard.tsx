@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { ModelDetectionResult } from '../types';
 import { SpinnerIcon } from './icons';
 import { UploadBox } from './UploadBox';
+import { InfoTooltip } from './InfoTooltip';
 
 interface SystemInputsCardProps {
   modelFile: File | null;
@@ -30,9 +31,12 @@ export function SystemInputsCard({
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 flex flex-col gap-5">
-      <h2 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-        1. System Inputs
-      </h2>
+      <div className="flex items-center gap-1.5">
+        <h2 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+          1. System Inputs
+        </h2>
+        <InfoTooltip text="Upload your trained classifier model (.h5 or .pkl) and a NIR spectral CSV file, then click Analyze to run a protein classification." />
+      </div>
 
       <UploadBox
         file={modelFile}
