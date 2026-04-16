@@ -140,19 +140,17 @@ export default function Home() {
               {error}
             </div>
           )}
-          {analysisResult && (
-            <FinalVerdictCard
-              result={analysisResult}
-              modelFileName={modelFile?.name ?? '--'}
-            />
-          )}
+          <PredictionHistory records={predictionHistory} />
         </aside>
 
         <main className="flex-1 flex flex-col gap-4 min-w-0">
           <SpectralPlot hasData={!!dataFile} spectrumData={spectrumData} isHighProtein={analysisResult?.isHighProtein ?? null} />
           <div className="grid grid-cols-2 gap-4">
             <ConfidenceCard result={analysisResult} />
-            <PredictionHistory records={predictionHistory} />
+            <FinalVerdictCard
+              result={analysisResult}
+              modelFileName={modelFile?.name ?? '--'}
+            />
           </div>
         </main>
       </div>

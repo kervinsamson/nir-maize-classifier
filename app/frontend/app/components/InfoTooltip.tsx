@@ -9,11 +9,11 @@ export function InfoTooltip({ text }: InfoTooltipProps) {
     <div className="relative inline-flex group">
       <button
         type="button"
-        className="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[9px] font-bold flex items-center justify-center hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors cursor-default select-none"
+        className="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[9px] font-bold inline-flex items-center justify-center hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors cursor-default select-none leading-none"
         aria-label="More information"
         tabIndex={-1}
       >
-        ?
+        <span style={{ lineHeight: 1 }}>i</span>
       </button>
       <div
         role="tooltip"

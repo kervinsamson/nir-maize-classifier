@@ -33,17 +33,17 @@ export function SystemInputsCard({
     <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 flex flex-col gap-5">
       <div className="flex items-center gap-1.5">
         <h2 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-          1. System Inputs
+          System Inputs
         </h2>
-        <InfoTooltip text="Upload your trained classifier model (.h5 or .pkl) and a NIR spectral CSV file, then click Analyze to run a protein classification." />
+        <InfoTooltip text="Upload your trained classifier model (.pkl) and a NIR spectral CSV file, then click Analyze to run a protein classification. Upload .pkl." />
       </div>
 
       <UploadBox
         file={modelFile}
         onFileSelect={onModelSelect}
-        accept=".h5,.pkl"
-        label="Classifier Model"
-        hint="Upload .h5 or .pkl"
+        accept=".pkl"
+        label="Classifier Model (.pkl)"
+        hint="Upload .pkl"
         variant="model"
       />
 
