@@ -1,1 +1,1 @@
-1D-CNN
+PLS-DA

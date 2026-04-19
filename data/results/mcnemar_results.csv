@@ -1,4 +1,4 @@
 Comparison,Statistic,p-value,Significant (p<0.05)
-PLS-DA vs SVM,0.1739,0.6767,No
-PLS-DA vs 1D-CNN,1.3889,0.2386,No
-SVM vs 1D-CNN,0.2667,0.6056,No
+PLS-DA vs SVM,11.0769,0.0009,Yes
+PLS-DA vs 1D-CNN,15.8585,0.0001,Yes
+SVM vs 1D-CNN,0.1495,0.699,No

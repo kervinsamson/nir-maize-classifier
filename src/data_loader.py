@@ -132,6 +132,73 @@ def save_labeled_data(df, filepath):
     print(f"Shape of saved dataframe   : {df.shape}")
 
 
+def load_sensai_data(filepath):
+    """
+    Load the Maize_sensAIfood_Protein_549_NIRS5000_CRAW.csv dataset and
+    normalise it to the same format returned by load_raw_data(), so that
+    all downstream notebooks (02 labeling, 03 SG preprocessing, etc.) work
+    without further changes.
+
+    Differences from corn_mp5_regression_data.csv that are handled here:
+        - Spectral columns are named as wavelength integers (1100, 1102, …, 2498)
+          rather than Wave_1 … Wave_700.  They are renamed to Wave_1 … Wave_700
+          in order (both datasets cover the identical 1100–2498 nm range at 2 nm
+          steps, 700 channels total).
+        - The sample identifier column is 'ID' instead of 'SampleID'.
+        - Only 'Moisture' and 'Protein' are present as label columns
+          (no 'Starch' or 'Oil').  A dummy Starch=0 and Oil=0 column are added
+          so that assign_protein_labels() and save_labeled_data() remain unchanged.
+        - Metadata columns (Spectrometer, Cereal, Variety, Country, Year) are
+          dropped silently.
+
+    Parameters
+    ----------
+    filepath : str
+        Path to the sensai CSV file
+        (e.g. 'data/raw/Maize_sensAIfood_Protein_549_NIRS5000_CRAW.csv').
+
+    Returns
+    -------
+    X : numpy.ndarray, shape (n_samples, 700)
+        Matrix of NIR absorbance values — one row per sample.
+    labels_df : pandas.DataFrame, shape (n_samples, 4)
+        DataFrame with columns Moisture, Starch, Oil, Protein.
+        Starch and Oil are set to 0 (not available in this dataset).
+    sample_ids : list
+        List of sample ID strings (one entry per sample).
+    """
+    df = pd.read_csv(filepath)
+
+    # ── Identify the 700 spectral columns (integer wavelength names) ──────────
+    raw_spectral_cols = [c for c in df.columns if str(c).lstrip('-').isdigit()]
+    if len(raw_spectral_cols) != 700:
+        raise ValueError(
+            f"Expected 700 spectral columns, found {len(raw_spectral_cols)}. "
+            f"Check that the file is the sensai NIR dataset."
+        )
+
+    # ── Rename wavelength columns → Wave_1 … Wave_700 ─────────────────────────
+    rename_map = {old: new for old, new in zip(raw_spectral_cols, SPECTRAL_COLS)}
+    df = df.rename(columns={'ID': 'SampleID', **rename_map})
+
+    # ── Add missing label columns so downstream code stays unchanged ──────────
+    if 'Starch' not in df.columns:
+        df['Starch'] = 0.0
+    if 'Oil' not in df.columns:
+        df['Oil'] = 0.0
+
+    # ── Extract the same three outputs as load_raw_data() ─────────────────────
+    X          = df[SPECTRAL_COLS].to_numpy()
+    labels_df  = df[LABEL_COLS]
+    sample_ids = df['SampleID'].tolist()
+
+    print(f"Sensai dataset loaded : {df.shape[0]} samples")
+    print(f"X shape               : {X.shape}  (samples x wavelength channels)")
+    print(f"labels_df shape       : {labels_df.shape}  (samples x labels)")
+
+    return X, labels_df, sample_ids
+
+
 def load_labeled_data(filepath):
     """
     Load the processed labeled dataset for use in downstream notebooks.
