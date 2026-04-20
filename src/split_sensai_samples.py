@@ -9,8 +9,8 @@ Filename format:
     {ID}_{protein_value}_{high_protein|low_protein}.csv
     e.g.  Maize_4_0001_8.303_high_protein.csv
 
-Protein class is assigned via a median split on the Protein column,
-matching the same strategy used for the original 80-sample dataset.
+Protein class is read from data/processed/labeled.csv (1 = high protein,
+0 = low protein).
 
 Output directory: data/raw/samples_sensai/
 """
@@ -22,6 +22,7 @@ import pandas as pd
 _HERE      = os.path.dirname(os.path.abspath(__file__))
 _ROOT      = os.path.dirname(_HERE)
 INPUT_CSV  = os.path.join(_ROOT, 'data', 'raw', 'Maize_sensAIfood_Protein_549_NIRS5000_CRAW.csv')
+LABELED_CSV = os.path.join(_ROOT, 'data', 'processed', 'labeled.csv')
 OUTPUT_DIR = os.path.join(_ROOT, 'data', 'raw', 'samples_sensai')
 
 # ── Load ──────────────────────────────────────────────────────────────────────
@@ -32,15 +33,22 @@ print(f"Loaded: {df.shape[0]} samples, {df.shape[1]} columns")
 spectral_cols = [c for c in df.columns if str(c).lstrip('-').isdigit()]
 print(f"Spectral columns: {len(spectral_cols)} ({spectral_cols[0]} — {spectral_cols[-1]})")
 
-# ── Median split for protein class label ──────────────────────────────────────
-median_protein = df['Protein'].median()
-print(f"Median protein   : {median_protein:.4f}")
+# ── Load protein labels from labeled.csv (1 = high protein, 0 = low protein) ──
+labels_df = pd.read_csv(LABELED_CSV, usecols=['SampleID', 'Protein_Label'])
+label_map = dict(zip(labels_df['SampleID'], labels_df['Protein_Label']))
+print(f"Loaded {len(label_map)} labels from labeled.csv")
 
-df['Protein_Label'] = (df['Protein'] >= median_protein).astype(int)
+df['Protein_Label'] = df['ID'].map(label_map)
+missing = df['Protein_Label'].isna().sum()
+if missing:
+    print(f"WARNING: {missing} samples have no label in labeled.csv — they will be skipped")
+df = df.dropna(subset=['Protein_Label'])
+df['Protein_Label'] = df['Protein_Label'].astype(int)
+
 n_high = (df['Protein_Label'] == 1).sum()
 n_low  = (df['Protein_Label'] == 0).sum()
-print(f"High Protein (>= median) : {n_high} samples")
-print(f"Low Protein  (<  median) : {n_low} samples")
+print(f"High Protein (1) : {n_high} samples")
+print(f"Low Protein  (0) : {n_low} samples")
 
 # ── Output directory ──────────────────────────────────────────────────────────
 os.makedirs(OUTPUT_DIR, exist_ok=True)

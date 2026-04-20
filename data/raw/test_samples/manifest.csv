@@ -1,0 +1,11 @@
+SampleID,Protein,Protein_Label,Label_Text,Filename
+Maize_4_0177,8.2,1,high_protein,Maize_4_0177_high_protein.csv
+Maize_4_0231,8.6,1,high_protein,Maize_4_0231_high_protein.csv
+Maize_4_0279,8.9,1,high_protein,Maize_4_0279_high_protein.csv
+Maize_4_0176,8.3,1,high_protein,Maize_4_0176_high_protein.csv
+Maize_4_0224,8.0,1,high_protein,Maize_4_0224_high_protein.csv
+Maize_4_0432,7.5,0,low_protein,Maize_4_0432_low_protein.csv
+Maize_4_0521,7.400001,0,low_protein,Maize_4_0521_low_protein.csv
+Maize_4_0398,7.695511,0,low_protein,Maize_4_0398_low_protein.csv
+Maize_4_0043,7.751,0,low_protein,Maize_4_0043_low_protein.csv
+Maize_4_0431,7.3,0,low_protein,Maize_4_0431_low_protein.csv
