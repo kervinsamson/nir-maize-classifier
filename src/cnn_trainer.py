@@ -108,6 +108,7 @@ def build_1d_cnn(input_length=700):
 
             # --- Classification head ---
             layers.Flatten(),
+            # layers.GlobalAveragePooling1D(), # replaced flatten 11,200 to 64
             layers.Dense(32, activation='relu'),
             layers.Dropout(rate=0.3),
             layers.Dense(1, activation='sigmoid'),
