@@ -39,6 +39,7 @@ from sklearn.metrics import (
 # 1. Model Architecture
 # ---------------------------------------------------------------------------
 
+#original
 def build_1d_cnn(input_length=700):
     """
     Build and compile a simplified 1D Convolutional Neural Network for binary
@@ -71,6 +72,7 @@ def build_1d_cnn(input_length=700):
         • Larger first kernel (11) captures broader spectral absorption bands.
         • Lower learning rate (0.0001) prevents the Adam optimizer from
           overshooting the loss minimum.
+            - changed learning rate to 0.00001 to make training more stable on the small dataset
 
     Compiled with:
         • Optimizer : Adam(learning_rate=0.0001)
@@ -124,6 +126,42 @@ def build_1d_cnn(input_length=700):
 
     model.summary()
     return model
+
+# def build_1d_cnn(input_length=700):
+    
+#     model = keras.Sequential([
+#         layers.Input(shape=(input_length, 1)),
+
+#         # Block 1
+#         layers.Conv1D(32, kernel_size=7, activation='leaky_relu', padding='same'),
+#         layers.BatchNormalization(),
+#         layers.MaxPooling1D(pool_size=2),
+
+#         # Block 2
+#         layers.Conv1D(64, kernel_size=7, activation='leaky_relu', padding='same'),
+#         layers.BatchNormalization(),
+#         layers.MaxPooling1D(pool_size=2),
+
+#         # Block 3
+#         layers.Conv1D(128, kernel_size=7, activation='leaky_relu', padding='same'),
+#         layers.BatchNormalization(),
+#         layers.MaxPooling1D(pool_size=2),
+
+#         layers.Flatten(),
+#         layers.Dense(100, activation='leaky_relu'),
+#         layers.Dropout(rate=0.3),
+#         # --- Modified for classification ---
+#         layers.Dense(1, activation='sigmoid')
+#     ])
+
+#     model.compile(
+#         optimizer=keras.optimizers.Adam(learning_rate=0.0001),
+#         loss='binary_crossentropy',
+#         metrics=['accuracy']
+#     )
+#     model.summary()
+#     return model
+
 
 
 # ---------------------------------------------------------------------------

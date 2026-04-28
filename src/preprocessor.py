@@ -81,18 +81,26 @@ def plot_preprocessing_comparison(X_raw, X_smoothed, sample_idx=0):
     None
         Displays the plot inline (or in the active matplotlib backend).
     """
-    fig, ax = plt.subplots(figsize=(10, 4))
+    fig, axes = plt.subplots(2, 1, figsize=(10, 7), sharex=True)
 
+    # Top panel: raw vs smoothed
+    ax = axes[0]
     ax.plot(WAVELENGTHS, X_raw[sample_idx],
-            color='lightgray', linewidth=1.2, label='Raw Spectrum')
+            color='dimgray', linewidth=1.2, alpha=0.8, label='Raw Spectrum')
     ax.plot(WAVELENGTHS, X_smoothed[sample_idx],
             color='steelblue', linewidth=1.5, label='SG Smoothed')
-
     ax.set_title(f'Savitzky-Golay Preprocessing — Sample {sample_idx}',
                  fontsize=13)
-    ax.set_xlabel('Wavelength (nm)', fontsize=11)
     ax.set_ylabel('Absorbance', fontsize=11)
     ax.legend(fontsize=10)
+
+    # Bottom panel: residual (noise removed)
+    residual = X_raw[sample_idx] - X_smoothed[sample_idx]
+    axes[1].plot(WAVELENGTHS, residual, color='tomato', linewidth=1.0)
+    axes[1].axhline(0, color='black', linewidth=0.8, linestyle='--')
+    axes[1].set_title('Residual (Raw − Smoothed)', fontsize=11)
+    axes[1].set_xlabel('Wavelength (nm)', fontsize=11)
+    axes[1].set_ylabel('Difference', fontsize=11)
 
     plt.tight_layout()
     plt.show()
